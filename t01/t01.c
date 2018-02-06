@@ -1,12 +1,12 @@
-/* COMP2215 15/16: Task 01---SKELETON */
+/* COMP2215 15/16: Task 01 */
 
 /* For La Fortuna board 
 
    | Port | Pin | Function         |
    |------+-----+------------------|
    | B    |   7 | Green LED        |
-   |      |     | Rotary Encoder A |
-   |      |     | Rotary Encoder B |
+   | E    |   4 | Rotary Encoder A |
+   | E    |   5 | Rotary Encoder B |
  
 */
 
@@ -66,21 +66,24 @@ void init(void) {
 
 	DDRB  |=  _BV(PB7);   /* LED pin out */
 	PORTB &= ~_BV(PB7);   /* LED off */
-
+        // _BV(PB7) -> 1 << PB7
 	
 	/* ENABLE ENCODER INPUTS AND PULL-UPS */
-
+    DDRE &= ~_BV(PE4) & ~_BV(PE5);
+    PORTE |= _BV(PE4) | _BV(PE5);
 
 	/* Timer 0 for switch scan interrupt: */
 
-	TCCR0A = _BV(WGM01);
+	TCCR0A = _BV(WGM01); /* CTC */
 	TCCR0B = _BV(CS01)
           | _BV(CS00);   /* F_CPU / 64 */
-          
 
     /* SET OCR0A FOR A 1 MS PERIOD */        
+    OCR0A = (int8_t) (F_CPU / (2 * 64 * 1000) - 1) /* (DS, p. 128) */
     		
     /* ENABLE TIMER INTERRUPT */
+    //TIMSK0
+        // TIMSK0: Timer/Counter Interrupt Mask Register
 
 }
 
