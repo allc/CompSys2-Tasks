@@ -1,6 +1,10 @@
 *.pdf
 backup/
 
+Makefile
+
 *.elf
 *.hex
+
+fb.txt
 
