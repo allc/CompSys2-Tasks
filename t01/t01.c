@@ -1,3 +1,4 @@
+/* Compared with model answer */
 /* COMP2215 15/16: Task 01 */
 
 /* For La Fortuna board 
@@ -35,6 +36,7 @@ void main(void) {
 	init();
 
     /* ENABLE GLOBAL INTERRUPTS HERE */ 
+    sei();
 
 	for (;;) {
 		for (i=cnt; i > 0; --i) {
@@ -66,7 +68,7 @@ void init(void) {
 
 	DDRB  |=  _BV(PB7);   /* LED pin out */
 	PORTB &= ~_BV(PB7);   /* LED off */
-        // _BV(PB7) -> 1 << PB7
+        /* _BV(PB7) -> 1 << PB7 */
 	
 	/* ENABLE ENCODER INPUTS AND PULL-UPS */
     DDRE &= ~_BV(PE4) & ~_BV(PE5);
@@ -79,16 +81,21 @@ void init(void) {
           | _BV(CS00);   /* F_CPU / 64 */
 
     /* SET OCR0A FOR A 1 MS PERIOD */        
-    OCR0A = (int8_t) (F_CPU / (2 * 64 * 1000) - 1) /* (DS, p. 128) */
+    OCR0A = (int8_t) (F_CPU / (2 * 64.0 * 1000) - 1); /* (DS, p. 128) */
+        /* OCR0A: Output Compare Register */
+        /* Waveform Frequency 1000 */
     		
     /* ENABLE TIMER INTERRUPT */
-    //TIMSK0
-        // TIMSK0: Timer/Counter Interrupt Mask Register
+    TIMSK0 |= _BV(OCIE0A);
+        /* TIMSK0: Timer/Counter Interrupt Mask Register */
+        /* (DS, p. 113) */
 
 }
 
 
 
+/* Interrupt Service Routines */
+/* Interrupt vectors DS, p. 68 */
  ISR( TIMER0_COMPA_vect ) {
      static int8_t last;
      int8_t new, diff;
