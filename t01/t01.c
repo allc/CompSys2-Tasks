@@ -110,10 +110,14 @@ void init(void) {
      */
 
      wheel = PINE;
+        /* Port E Input Pins Address */
      new = 0;
-     if( wheel  & _BV(PE4) ) new = 3;
+     if( wheel  & _BV(PE4) ) new = 3; 
+        /* 0b00000011 */
      if( wheel  & _BV(PE5) )
 	 new ^= 1;		        	/* convert gray to binary */
+        /* new = new ^ 1; */
+        /* 0b00000001 */
      diff = last - new;			/* difference last - new  */
      if( diff & 1 ){			/* bit 0 = value (1) */
 	     last = new;		       	/* store new as next last  */
