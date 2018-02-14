@@ -2,6 +2,7 @@
 backup/
 
 Makefile
+_build/
 
 *.elf
 *.hex
