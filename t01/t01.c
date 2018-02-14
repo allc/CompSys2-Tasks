@@ -81,7 +81,7 @@ void init(void) {
           | _BV(CS00);   /* F_CPU / 64 */
 
     /* SET OCR0A FOR A 1 MS PERIOD */        
-    OCR0A = (int8_t) (F_CPU / (2 * 64.0 * 1000) - 1); /* (DS, p. 128) */
+    OCR0A = (int8_t) (F_CPU / (64.0 * 1000) - 1); /* (DS, p. 128) */
         /* OCR0A: Output Compare Register */
         /* Waveform Frequency 1000 */
     		
