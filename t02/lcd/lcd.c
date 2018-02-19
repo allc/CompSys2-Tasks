@@ -19,6 +19,8 @@ void init_lcd()
 {
     /* Enable extended memory interface with 10 bit addressing */
     XMCRB = _BV(XMM2) | _BV(XMM1);
+        /* XMCRB: External Memory Control Register B */
+        /* 2 bits for external memory address */
     XMCRA = _BV(SRE);
     DDRC |= _BV(RESET);
     DDRB |= _BV(BLC);
@@ -196,6 +198,15 @@ void display_char(char c)
     PGM_P fdata; 
     uint8_t bits, mask;
     uint16_t sc=display.x, ec=display.x + 4, sp=display.y, ep=display.y + 7;
+
+    if (c == '\n') {
+        display.x = 0;
+        display.y += 8;
+        if (display.y >= display.height) {
+            clear_screen();
+        }
+        return;
+    }
 
     if (c < 32 || c > 126) return;
     fdata = (c - ' ')*5 + font5x7;
