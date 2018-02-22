@@ -1,4 +1,4 @@
-/* COMP2215  Task 3---SKELETON
+/* COMP2215  Task 3
 
    Template for preemptive version of RIOS implemented on an AVR
    available from: http://www.cs.ucr.edu/~vahid/rios/rios_avr.htm
@@ -51,9 +51,9 @@ int8_t tasksNum = -1;
 
 const double tick_ms = 400.0;        /* Real time between ticks in ms */
 const uint32_t tasksPeriodGCD = 25;  /* Timer tick rate */
-const uint32_t period1 = 29;
-const uint32_t period2 = 77;
-const uint32_t period3 = 162;
+const uint32_t period1 = 25;
+const uint32_t period2 = 50;
+const uint32_t period3 = 150;
 
 int TickFct_1(int state);
 int TickFct_2(int state);
@@ -68,7 +68,7 @@ uint8_t currentTask = 0;                   /* Index of highest priority task in 
 unsigned schedule_time = 0;
 ISR(TIMER1_COMPA_vect) {
    uint8_t i;
-
+   LED_OFF;
    for (i=0; i <= tasksNum; ++i) { /* Heart of scheduler code */
       if (  (tasks[i].elapsedTime >= tasks[i].period) /* Task ready */
           && (runningTasks[currentTask] > i) /* Task priority > current task priority */
@@ -94,9 +94,9 @@ ISR(TIMER1_COMPA_vect) {
       tasks[i].elapsedTime += tasksPeriodGCD;
    }
 
+   LED_ON;
    display_color(SEA_GREEN, BLACK);
    printf("-");
-
 
 }
 
@@ -123,13 +123,14 @@ int main(void) {
 
 
    LED_INIT;
+   LED_OFF;
    init_lcd();
    init_processor();
 
 
-   tasks[++tasksNum].state = -1;
-   tasks[tasksNum].period = period1;
-   tasks[tasksNum].elapsedTime = tasks[tasksNum].period;
+   tasks[++tasksNum].state = -1;    /* current state */
+   tasks[tasksNum].period = period1;    /* Rate at which the task should tick */
+   tasks[tasksNum].elapsedTime = tasks[tasksNum].period;    /* Time since task's previous tick */
    tasks[tasksNum].running = 0;
    tasks[tasksNum].TickFct = &TickFct_1;
 
