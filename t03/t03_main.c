@@ -1,4 +1,4 @@
-/* COMP2215  Task 3
+/* COMP2215  Task 3 EXTRA WORK
 
    Template for preemptive version of RIOS implemented on an AVR
    available from: http://www.cs.ucr.edu/~vahid/rios/rios_avr.htm
@@ -21,6 +21,7 @@
 #include <math.h>
 #include <util/delay.h>
 #include "lcd.h"
+#include <avr/sleep.h>
 
 /* Limited by int8_t: */
 #define MAX_TASKS 20
@@ -59,7 +60,7 @@ int TickFct_1(int state);
 int TickFct_2(int state);
 int TickFct_3(int state);
 
-
+void go_to_sleep();
 
 uint8_t runningTasks[MAX_TASKS+1] = {255}; /* Track running tasks, [0] always idleTask */
 const uint32_t idleTask = 255;             /* 0 highest priority, 255 lowest */
@@ -68,7 +69,7 @@ uint8_t currentTask = 0;                   /* Index of highest priority task in 
 unsigned schedule_time = 0;
 ISR(TIMER1_COMPA_vect) {
    uint8_t i;
-   LED_OFF;
+   LED_ON;
    for (i=0; i <= tasksNum; ++i) { /* Heart of scheduler code */
       if (  (tasks[i].elapsedTime >= tasks[i].period) /* Task ready */
           && (runningTasks[currentTask] > i) /* Task priority > current task priority */
@@ -93,10 +94,6 @@ ISR(TIMER1_COMPA_vect) {
       }
       tasks[i].elapsedTime += tasksPeriodGCD;
    }
-
-   LED_ON;
-   display_color(SEA_GREEN, BLACK);
-   printf("-");
 
 }
 
@@ -123,8 +120,9 @@ int main(void) {
 
 
    LED_INIT;
-   LED_OFF;
+   LED_ON;
    init_lcd();
+   set_sleep_mode(SLEEP_MODE_IDLE);
    init_processor();
 
 
@@ -148,7 +146,13 @@ int main(void) {
 
    sei();
 
-   while(1){};
+   while(1){
+     sei();
+     LED_OFF;
+     display_color(SEA_GREEN, BLACK);
+     printf("-");
+     sleep_mode();
+   };
 
 }
 
@@ -165,7 +169,7 @@ int TickFct_1(int state) {
 int TickFct_2(int state) {
 	display_color(GOLD, BLACK);
     printf( "[T2<");
-    _delay_ms(600);
+    _delay_ms(200);
     display_color(GOLD, BLACK);
     printf( ">T2]");
     return ++state;
@@ -174,7 +178,7 @@ int TickFct_2(int state) {
 int TickFct_3(int state) {
 	display_color(DARK_CYAN, BLACK);
     printf( "[T3<");
-    _delay_ms(2000);
+    _delay_ms(180);
     display_color(DARK_CYAN, BLACK);
     printf( ">T3]");
     return ++state;
