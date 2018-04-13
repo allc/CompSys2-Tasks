@@ -24,6 +24,7 @@
 #include "rios.h"
 #include "ruota.h"
 #include "ff.h"
+#include "ram/ram.h"
 
 
 
