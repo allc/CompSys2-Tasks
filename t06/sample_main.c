@@ -27,7 +27,7 @@ void main(void) {
     os_add_task( blink,            30, 1);
     os_add_task( collect_delta,   500, 1);
     os_add_task( check_switches,  100, 1);
-	os_add_task( show_free_ram,   2000, 1);
+	os_add_task( show_free_ram,  2000, 1);
 
     sei();
     for(;;){}
@@ -152,8 +152,8 @@ int blink(int state) {
 }
 
 int show_free_ram(int state) {
-	char *free_ram_string = (char*)malloc(17 * sizeof(char));
-	sprintf(free_ram_string, "Free ram: %d\n", get_free_ram());
+	char *free_ram_string = (char*)malloc(15 * sizeof(char));
+	sprintf(free_ram_string, "Free ram: %4d\n", get_free_ram());
 	display_string(free_ram_string);
 }
 
