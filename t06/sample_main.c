@@ -155,6 +155,8 @@ int show_free_ram(int state) {
 	char *free_ram_string = (char*)malloc(15 * sizeof(char));
 	sprintf(free_ram_string, "Free ram: %4d\n", get_free_ram());
 	display_string(free_ram_string);
+	free(free_ram_string);
+	return state;
 }
 
 
