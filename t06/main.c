@@ -1,5 +1,6 @@
-/* COMP2215 Task 5---MODEL ANSWER */
+/* COMP2215 Task 6 */
 
+/* The board freezes when run out of memory */
 
 #include "os.h"
 

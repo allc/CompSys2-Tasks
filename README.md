@@ -17,3 +17,7 @@ Display driver.
 ### Task 3
 
 Preemptive Scheduler.
+
+### Task 6
+
+Measure RAM usage.
