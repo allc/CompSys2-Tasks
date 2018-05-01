@@ -1,6 +1,9 @@
 #include "main.h"
 
 #define DIMENSION 3
+
+int posi = 0;
+
 volatile int board[DIMENSION][DIMENSION] = {
     {0, 1, 2},
     {3, 4, 5},
@@ -11,7 +14,7 @@ volatile int board[DIMENSION][DIMENSION] = {
 volatile int y = 2;
 volatile int x = 2;
 
-volatile int in_game = 0;
+volatile int in_game = 1;
 
 int move_up() {
 	if (x < DIMENSION - 1) {
@@ -66,12 +69,11 @@ int check() {
 int reset() {
 	move_down();
 	random_board(2);
-	in_game = 1;
-	clear_screen();
 	return 0;
 }
 
 int random_board(int times) {
+	srand(TCNT2);
 	int i;
 	for (i = 0; i < times; i++) {
 		int n = rand() % 4;
@@ -129,16 +131,22 @@ int main() {
 
 	/*timer for random seed */
 	TCCR2B |= (1 << CS10);
-	srand(TCNT2);
 
 	display_string_xy("Press Center to Start", 0, 10);
+	LED_ON;
 
 	do{
 		while(!center_pressed()){}
 
 		reset();
 
+		in_game = 1;
+		clear_screen();
+
 		redraw();
+
+		display_string_xy("game", posi, posi);
+		posi+=10;
 
 		OCR1A = 65535;
 		LED_OFF;
