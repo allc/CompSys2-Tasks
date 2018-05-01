@@ -66,15 +66,9 @@ int check() {
 	return 1;
 }
 
-int reset() {
-	move_down();
-	random_board(2);
-	return 0;
-}
-
 int random_board(int times) {
-	srand(TCNT2);
 	int i;
+	srand(TCNT2);
 	for (i = 0; i < times; i++) {
 		int n = rand() % 4;
 		switch(n) {
@@ -97,6 +91,12 @@ int random_board(int times) {
 	return 0;
 }
 
+int reset() {
+	move_down();
+	random_board(2);
+	return 0;
+}
+
 int redraw() {
 	int i;
     for (i = 0; i < 3; i++) {
@@ -115,11 +115,8 @@ int main() {
 	/* Clear DIV8 to get 8MHz clock */
 	CLKPR = (1 << CLKPCE);
 	CLKPR = 0;
-    
-	/* init led */
-	DDRB |= _BV(PB7);
-	PORTB &= ~_BV(PB7);
 
+	init_led();
     init_lcd();
 	init_switches();
     
@@ -133,7 +130,7 @@ int main() {
 	TCCR2B |= (1 << CS10);
 
 	display_string_xy("Press Center to Start", 0, 10);
-	LED_ON;
+	led_on();
 
 	do{
 		while(!center_pressed()){}
@@ -149,11 +146,11 @@ int main() {
 		posi+=10;
 
 		OCR1A = 65535;
-		LED_OFF;
+		led_off();
 		sei();
 		while(in_game);
 		cli();
-		LED_ON;
+		led_on();
 		display_string_xy("Done", 50, 50); 
 		display_string_xy("Press Center to Restart",0,10);
 	} while (1);
