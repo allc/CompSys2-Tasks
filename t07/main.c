@@ -4,12 +4,14 @@
 volatile int board[DIMENSION][DIMENSION] = {
     {0, 1, 2},
     {3, 4, 5},
-    {6, 8, 7}
+    {6, 7, 8}
 };
 
 /* location of gap */
-volatile int y = 1;
+volatile int y = 2;
 volatile int x = 2;
+
+volatile int in_game = 0;
 
 int move_up() {
 	if (x < DIMENSION - 1) {
@@ -61,6 +63,38 @@ int check() {
 	return 1;
 }
 
+int reset() {
+	move_down();
+	random_board(2);
+	in_game = 1;
+	clear_screen();
+	return 0;
+}
+
+int random_board(int times) {
+	int i;
+	for (i = 0; i < times; i++) {
+		int n = rand() % 4;
+		switch(n) {
+			case 0:
+				move_up();
+				break;
+			case 1:
+				move_down();
+				break;
+			case 2:
+				move_left();
+				break;
+			case 3:
+				move_right();
+				break;
+			default:
+				break;
+		}
+	}
+	return 0;
+}
+
 int redraw() {
 	int i;
     for (i = 0; i < 3; i++) {
@@ -81,31 +115,42 @@ int main() {
 	CLKPR = 0;
     
 	/* init led */
-	/*
 	DDRB |= _BV(PB7);
 	PORTB &= ~_BV(PB7);
-	*/
 
     init_lcd();
 	init_switches();
     
-	redraw();
-
 	/* enable button press inturrupt */
 	TCCR1A = 0;
 	TCCR1B = _BV(WGM12);
 	TCCR1B |= _BV(CS10);
 	TIMSK1 |= _BV(OCIE1A);
-	OCR1A = 65535;
 
-	/* enable global interrupt */
-	sei();
+	/*timer for random seed */
+	TCCR2B |= (1 << CS10);
+	srand(TCNT2);
 
-	while(1) {
-		
-	}
+	display_string_xy("Press Center to Start", 0, 10);
 
-	return 0;
+	do{
+		while(!center_pressed()){}
+
+		reset();
+
+		redraw();
+
+		OCR1A = 65535;
+		LED_OFF;
+		sei();
+		while(in_game);
+		cli();
+		LED_ON;
+		display_string_xy("Done", 50, 50); 
+		display_string_xy("Press Center to Restart",0,10);
+	} while (1);
+
+	return -1;
 }
 
 ISR(TIMER1_COMPA_vect)
@@ -127,6 +172,6 @@ ISR(TIMER1_COMPA_vect)
 	}
 	redraw();
 	if (check()) {
-		display_string_xy("Done", 50, 50);
+		in_game = 0;
 	}
 }
