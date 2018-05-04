@@ -114,7 +114,6 @@ void draw_grid() {
 
 int redraw() {
 	int i;
-	draw_grid();
 	/* draw image */
     for (i = 0; i < 3; i++) {
         int j;
@@ -126,6 +125,13 @@ int redraw() {
     }
 
 	return 0;
+}
+
+void moved() {
+	redraw();
+	if (check()) {
+		in_game = 0;
+	}
 }
 
 void display_title() {
@@ -181,12 +187,15 @@ int main() {
 		reset_switches();
 		while(!center_pressed()){}
 
+		/* enter game */
 		reset();
 
 		in_game = 1;
 		clear_screen();
 
+		draw_grid();
 		redraw();
+		moved();
 
 		OCR1A = 65535;
 
@@ -196,6 +205,7 @@ int main() {
 		cli();
 		led_on();
 
+		/* finish game */
 		_delay_ms(2000);
 		clear_screen();
 		display_title();
@@ -214,18 +224,18 @@ ISR(TIMER1_COMPA_vect)
 	}
 	if(left_pressed()){
 		move_left();
+		moved();
 	}
 	if(right_pressed()){
 		move_right();
+		moved();
 	}
 	if(up_pressed()){
 		move_up();
+		moved();
 	}
 	if(down_pressed()){
 		move_down();
-	}
-	redraw();
-	if (check()) {
-		in_game = 0;
+		moved();
 	}
 }
