@@ -90,19 +90,38 @@ int random_board(int times) {
 }
 
 int reset() {
-	move_down();
-	random_board(2);
+	random_board(4);
 	return 0;
+}
+
+void draw_grid() {
+	int i;
+	for (i = 0; i < 2; i++) {
+		/* draw vertical lines */
+		rectangle rect;
+		rect.left = (i + 1) * 80;
+		rect.right = (i + 1) * 80;
+		rect.top = 0;
+		rect.bottom = 319;
+		fill_rectangle(rect, WHITE);
+		rect.left = 0;
+		rect.right = 239;
+		rect.top = (i + 1) * 107;
+		rect.bottom = (i + 1) * 107;
+		fill_rectangle(rect, WHITE);
+	}
 }
 
 int redraw() {
 	int i;
+	draw_grid();
+	/* draw image */
     for (i = 0; i < 3; i++) {
         int j;
         for (j = 0; j < 3; j++) {
             char tile[1];
 			sprintf(tile,"%d",board[i][j]);
-    		display_string_xy(tile, j * 80, i * 100);
+    		display_string_xy(tile, j * 80, i * 107);
         }
     }
 
@@ -110,15 +129,12 @@ int redraw() {
 }
 
 void display_title() {
-	display_string("\n");
-	display_string("       ____ \n");
-	display_string("      / ___\\\n");
-	display_string("      \\ \\ //\n");
-	display_string("      / /_\\\n");
-	display_string("      \\____/\n");
-	display_string("\n");
-	display.foreground = BLUE;
-	display_string("                           _      \n");
+	display_string_xy("\n", 0, 0);
+	display_string("                    ____ \n");
+	display_string("                   / ___\\\n");
+	display_string("                   \\ \\ //\n");
+	display_string("                   / /_\\\\\n");
+	display_string("                   \\____/"); display.foreground = GREEN; display_string("  _      \n");
 	display.foreground = GREEN;
 	display_string("                          | |     \n");
 	display.foreground = CYAN;
@@ -131,7 +147,7 @@ void display_title() {
 	display_string("      | .__/ \\__,_/___/___|_|\\___|\n");
 	display.foreground = MAGENTA;
 	display_string("      | |                         \n");
-	display.foreground = BLUE;
+	display.foreground = GREEN;
 	display_string("      |_|                         \n");
 	display.foreground = WHITE;
 	display_string("\n");
@@ -173,13 +189,19 @@ int main() {
 		redraw();
 
 		OCR1A = 65535;
+
 		led_off();
 		sei();
 		while(in_game);
 		cli();
 		led_on();
-		display_string_xy("Done", 50, 50); 
-		display_string_xy("Press Center to Restart",0,10);
+
+		_delay_ms(2000);
+		clear_screen();
+		display_title();
+		display_string("                  Done\n");
+		display_string("\n");
+		display_string("        Press Center to Restart");
 	} while (1);
 
 	return -1;
