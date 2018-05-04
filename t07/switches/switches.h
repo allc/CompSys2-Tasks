@@ -13,3 +13,4 @@ int right_pressed();
 int up_pressed();
 int down_pressed();
 int down_held();
+void reset_switches();

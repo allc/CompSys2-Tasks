@@ -109,6 +109,34 @@ int redraw() {
 	return 0;
 }
 
+void display_title() {
+	display_string("\n");
+	display_string("       ____ \n");
+	display_string("      / ___\\\n");
+	display_string("      \\ \\ //\n");
+	display_string("      / /_\\\n");
+	display_string("      \\____/\n");
+	display_string("\n");
+	display.foreground = BLUE;
+	display_string("                           _      \n");
+	display.foreground = GREEN;
+	display_string("                          | |     \n");
+	display.foreground = CYAN;
+	display_string("       _ __  _   _ _______| | ___ \n");
+	display.foreground = RED;
+	display_string("      | '_ \\| | | |_  /_  / |/ _ \\\n");
+	display.foreground = MAGENTA;
+	display_string("      | |_) | |_| |/ / / /| |  __/\n");
+	display.foreground = YELLOW;
+	display_string("      | .__/ \\__,_/___/___|_|\\___|\n");
+	display.foreground = MAGENTA;
+	display_string("      | |                         \n");
+	display.foreground = BLUE;
+	display_string("      |_|                         \n");
+	display.foreground = WHITE;
+	display_string("\n");
+}
+
 int main() {
 	/* Clear DIV8 to get 8MHz clock */
 	CLKPR = (1 << CLKPCE);
@@ -117,17 +145,20 @@ int main() {
 	init_led();
     init_lcd();
 	init_switches();
-    
+	set_orientation(North);
+
 	/* enable button press inturrupt */
 	TCCR1A = 0;
 	TCCR1B = _BV(WGM12);
 	TCCR1B |= _BV(CS10);
 	TIMSK1 |= _BV(OCIE1A);
 
-	/*timer for random seed */
+	/* timer for random seed */
 	TCCR2B |= (1 << CS10);
 
-	display_string_xy("Press Center to Start", 0, 10);
+	/* start program */
+	display_title();
+	display_string("          Press Center to Start");
 	led_on();
 
 	do{
