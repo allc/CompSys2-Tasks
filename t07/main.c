@@ -2,8 +2,6 @@
 
 #define DIMENSION 3
 
-int posi = 0;
-
 volatile int board[DIMENSION][DIMENSION] = {
     {0, 1, 2},
     {3, 4, 5},
@@ -103,8 +101,8 @@ int redraw() {
         int j;
         for (j = 0; j < 3; j++) {
             char tile[1];
-    		sprintf(tile,"%d",board[i][j]);
-            display_string_xy(tile, j * 80, i * 100);
+			sprintf(tile,"%d",board[i][j]);
+    		display_string_xy(tile, j * 80, i * 100);
         }
     }
 
@@ -133,6 +131,7 @@ int main() {
 	led_on();
 
 	do{
+		reset_switches();
 		while(!center_pressed()){}
 
 		reset();
@@ -141,9 +140,6 @@ int main() {
 		clear_screen();
 
 		redraw();
-
-		display_string_xy("game", posi, posi);
-		posi+=10;
 
 		OCR1A = 65535;
 		led_off();

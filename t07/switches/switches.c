@@ -23,6 +23,15 @@ void init_switches(){
 	EICRB |= _BV(ISC40) | _BV(ISC50) | _BV(ISC71);
 }
 
+void reset_switches() {
+	center_down = 0;
+	left_down = 0;
+	right_down = 0;
+	up_down = 0;
+	down_down = 0;
+	down = 0;
+}
+
 int center_pressed(){
 	if ((~PINE & _BV(PE7)) && !center_down && !down) {
 		center_down = 1;
