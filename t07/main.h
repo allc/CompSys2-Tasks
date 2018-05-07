@@ -6,3 +6,6 @@
 #include "lcd/lcd.h"
 #include "led/led.h"
 #include "switches/switches.h"
+#include "fatfs/ff.h"
+#include "BMPedded/bmp.h"
+#include "BMPedded/bmp_lcd.h"

@@ -1,3 +1,5 @@
+#ifndef LCD_HEADER
+#define LCD_HEADER
 /*  Author: Steve Gunn
  * Licence: This work is licensed under the Creative Commons Attribution License.
  *           View this license at http://creativecommons.org/about/licenses/
@@ -47,3 +49,4 @@ void display_char(char c);
 void display_string(char *str);
 void display_string_xy(char *str, uint16_t x, uint16_t y);
 void display_register(uint8_t reg);
+#endif
