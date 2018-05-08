@@ -18,6 +18,9 @@ volatile int in_game = 1;
 FIL file;
 FATFS FatFs;
 
+bmp_image_loader_state image_state;
+status_t stat;
+
 void read_image_bytes(bmp_data_request * request) {
 	UINT temp = 0;
 	f_lseek(&file, request->dataOffset);
@@ -138,20 +141,14 @@ int redraw() {
 			sprintf(tile,"%d",board[i][j]);
     		display_string_xy(tile, j * 80, i * 80);
 
-			bmp_image_loader_state image_state;
-			rectangle rect = {0, 320, 0, 240};
-			f_mount(&FatFs, "", 0);
-			char file_name[6];
-			sprintf(file_name, "%d%d.bmp", i, j);
-			f_open(&file, file_name, FA_READ);
-			status_t stat = init_bmp(&image_state, read_image_bytes, 4096);
+			rectangle rect;
+			rect.top = j * 80;
+			rect.left = i * 80;
+			rect.bottom = (j + 1) * 80;
+			rect.right = (i + 1) * 80;
 			if (stat == STATUS_OK) {
-				rect.right = image_state.dibHeader.imageWidth;
-				rect.bottom = image_state.dibHeader.imageHeight;
 				display_segment_bmp(j * 80, i * 80, &rect, &image_state);
 			}
-			free(image_state.imageData);
-			f_close(&file);
 
         }
     }
@@ -215,6 +212,9 @@ int main() {
 	display_string("          Press Center to Start");
 	led_on();
 
+	/* mount file system */
+	f_mount(&FatFs, "", 0);
+
 	do{
 		reset_switches();
 		while(!center_pressed()){}
@@ -226,6 +226,11 @@ int main() {
 		clear_screen();
 
 		draw_grid();
+
+		/* load image */
+		f_open(&file, "puzzle.bmp", FA_READ);
+		stat = init_bmp(&image_state, read_image_bytes, 4096);
+
 		redraw();
 		moved();
 
@@ -235,6 +240,11 @@ int main() {
 		sei();
 		while(in_game);
 		cli();
+
+		/* close image file */
+		free(image_state.imageData);
+		f_close(&file);
+
 		led_on();
 
 		/* finish game */
