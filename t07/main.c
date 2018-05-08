@@ -14,6 +14,16 @@ volatile int x = 2;
 
 volatile int in_game = 1;
 
+/* images */
+FIL file;
+FATFS FatFs;
+
+void read_image_bytes(bmp_data_request * request) {
+	UINT temp = 0;
+	f_lseek(&file, request->dataOffset);
+	f_read(&file, request->buffer, request->bufferSize, &temp);
+}
+
 int move_up() {
 	if (x < DIMENSION - 1) {
 		board[x][y] = board[x + 1][y];
@@ -121,6 +131,21 @@ int redraw() {
             char tile[1];
 			sprintf(tile,"%d",board[i][j]);
     		display_string_xy(tile, j * 80, i * 107);
+
+			bmp_image_loader_state image_state;
+			rectangle rect = {0, 320, 0, 240};
+			f_mount(&FatFs, "", 0);
+			char file_name[6];
+			sprintf(file_name, "01.bmp", i, j);
+			f_open(&file, file_name, FA_READ);
+			status_t stat = init_bmp(&image_state, read_image_bytes, 4096);
+			if (stat == STATUS_OK) {
+				rect.right = image_state.dibHeader.imageWidth;
+				rect.bottom = image_state.dibHeader.imageHeight;
+				display_segment_bmp(0, 0, &rect, &image_state);
+			}
+			f_close(&file);
+
         }
     }
 
