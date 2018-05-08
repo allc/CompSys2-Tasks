@@ -142,14 +142,15 @@ int redraw() {
 			rectangle rect = {0, 320, 0, 240};
 			f_mount(&FatFs, "", 0);
 			char file_name[6];
-			sprintf(file_name, "01.bmp", i, j);
+			sprintf(file_name, "%d%d.bmp", i, j);
 			f_open(&file, file_name, FA_READ);
 			status_t stat = init_bmp(&image_state, read_image_bytes, 4096);
 			if (stat == STATUS_OK) {
 				rect.right = image_state.dibHeader.imageWidth;
 				rect.bottom = image_state.dibHeader.imageHeight;
-				display_segment_bmp(0, 0, &rect, &image_state);
+				display_segment_bmp(j * 80, i * 80, &rect, &image_state);
 			}
+			free(image_state.imageData);
 			f_close(&file);
 
         }
