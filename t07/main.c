@@ -106,20 +106,26 @@ int reset() {
 
 void draw_grid() {
 	int i;
+	rectangle rect;
 	for (i = 0; i < 2; i++) {
 		/* draw vertical lines */
-		rectangle rect;
 		rect.left = (i + 1) * 80;
 		rect.right = (i + 1) * 80;
 		rect.top = 0;
-		rect.bottom = 319;
+		rect.bottom = 240;
 		fill_rectangle(rect, WHITE);
+		/* draw horizontal lines */
 		rect.left = 0;
 		rect.right = 239;
-		rect.top = (i + 1) * 107;
-		rect.bottom = (i + 1) * 107;
-		fill_rectangle(rect, WHITE);
+		rect.top = (i + 1) * 80;
+		rect.bottom = (i + 1) * 80;
+		fill_rectangle(rect, WHITE);		
 	}
+	rect.left = 0;
+	rect.right = 239;
+	rect.top = 240;
+	rect.bottom = 240;
+	fill_rectangle(rect, WHITE);
 }
 
 int redraw() {
@@ -130,7 +136,7 @@ int redraw() {
         for (j = 0; j < 3; j++) {
             char tile[1];
 			sprintf(tile,"%d",board[i][j]);
-    		display_string_xy(tile, j * 80, i * 107);
+    		display_string_xy(tile, j * 80, i * 80);
 
 			bmp_image_loader_state image_state;
 			rectangle rect = {0, 320, 0, 240};
