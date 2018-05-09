@@ -131,23 +131,44 @@ void draw_grid() {
 	fill_rectangle(rect, WHITE);
 }
 
+int tileToY(int tile) {
+	return tile / 3;
+}
+
+int tileToX(int tile) {
+	return tile % 3;
+}
+
 int redraw() {
 	int i;
 	/* draw image */
     for (i = 0; i < 3; i++) {
         int j;
         for (j = 0; j < 3; j++) {
+			/*
             char tile[1];
 			sprintf(tile,"%d",board[i][j]);
     		display_string_xy(tile, j * 80, i * 80);
+			*/
 
-			rectangle rect;
-			rect.top = i * 80;
-			rect.left = j * 80;
-			rect.bottom = (i + 1) * 80;
-			rect.right = (j + 1) * 80;
-			if (stat == STATUS_OK) {
-				display_segment_bmp(j * 80, i * 80, &rect, &image_state);
+			if (board[i][j] != 8) {
+				rectangle rect;
+				int x = tileToX(board[i][j]);
+				int y = tileToY(board[i][j]);
+				rect.top = y * 80;
+				rect.left = x * 80;
+				rect.bottom = (y + 1) * 80;
+				rect.right = (x + 1) * 80;
+				if (stat == STATUS_OK) {
+					display_segment_bmp(j * 80, i * 80, &rect, &image_state);
+				}
+			} else {
+				rectangle rect;
+				rect.top = i * 80;
+				rect.left = j * 80;
+				rect.bottom = (i + 1) * 80;
+				rect.right = (j + 1) * 80;
+				fill_rectangle(rect, BLACK);
 			}
 
         }
