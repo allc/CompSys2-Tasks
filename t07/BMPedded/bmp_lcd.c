@@ -50,7 +50,7 @@ status_t display_segment_bmp(uint16_t x, uint16_t y, rectangle * area, bmp_image
 {
   loaderState->currentRow = area->top;
   uint16_t rowWidth = (area->right - area->left);
-  uint16_t targetY = y + area->bottom;
+  uint16_t targetY = y + area->bottom - area->top;
   init_draw(x, y, x+rowWidth-1, targetY-1);
   while(y < targetY)
   {

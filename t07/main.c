@@ -142,10 +142,10 @@ int redraw() {
     		display_string_xy(tile, j * 80, i * 80);
 
 			rectangle rect;
-			rect.top = j * 80;
-			rect.left = i * 80;
-			rect.bottom = (j + 1) * 80;
-			rect.right = (i + 1) * 80;
+			rect.top = i * 80;
+			rect.left = j * 80;
+			rect.bottom = (i + 1) * 80;
+			rect.right = (j + 1) * 80;
 			if (stat == STATUS_OK) {
 				display_segment_bmp(j * 80, i * 80, &rect, &image_state);
 			}
