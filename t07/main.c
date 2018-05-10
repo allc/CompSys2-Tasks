@@ -145,11 +145,10 @@ int redraw() {
     for (i = 0; i < 3; i++) {
         int j;
         for (j = 0; j < 3; j++) {
-			/*
             char tile[1];
 			sprintf(tile,"%d",board[i][j]);
     		display_string_xy(tile, j * 80, i * 80);
-			*/
+			_delay_ms(1);
 
 			if (board[i][j] != 8) {
 				rectangle rect;
@@ -222,7 +221,7 @@ int main() {
 	/* enable button press inturrupt */
 	TCCR1A = 0;
 	TCCR1B = _BV(WGM12);
-	TCCR1B |= _BV(CS10);
+	TCCR1B |= _BV(CS11);
 	TIMSK1 |= _BV(OCIE1A);
 
 	/* timer for random seed */
