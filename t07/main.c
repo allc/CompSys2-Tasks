@@ -12,7 +12,10 @@ volatile int board[DIMENSION][DIMENSION] = {
 volatile int y = 2;
 volatile int x = 2;
 
-volatile int in_game = 1;
+/* game stat */
+volatile int moves = 0;
+
+volatile int in_game = 0;
 
 /* images */
 FIL file;
@@ -27,42 +30,6 @@ void read_image_bytes(bmp_data_request * request) {
 	f_read(&file, request->buffer, request->bufferSize, &temp);
 }
 
-int move_up() {
-	if (x < DIMENSION - 1) {
-		board[x][y] = board[x + 1][y];
-		board[x + 1][y] = 8;
-		x++;
-	}
-	return 0;
-}
-
-int move_down() {
-	if (x > 0) {
-		board[x][y] = board[x - 1][y];
-		board[x - 1][y] = 8;
-		x--;
-	}
-	return 0;
-}
-
-int move_left() {
-	if (y < DIMENSION - 1) {
-		board[x][y] = board[x][y + 1];
-		board[x][y + 1] = 8;
-		y++;
-	}
-	return 0;
-}
-
-int move_right() {
-	if (y > 0) {
-		board[x][y] = board[x][y - 1];
-		board[x][y - 1] = 8;
-		y--;
-	}
-	return 0;
-}
-
 int check() {
 	int i, j, k;
 	k = 0;
@@ -75,36 +42,6 @@ int check() {
 		}
 	}
 	return 1;
-}
-
-int random_board(int times) {
-	int i;
-	srand(TCNT2);
-	for (i = 0; i < times; i++) {
-		int n = rand() % 4;
-		switch(n) {
-			case 0:
-				move_up();
-				break;
-			case 1:
-				move_down();
-				break;
-			case 2:
-				move_left();
-				break;
-			case 3:
-				move_right();
-				break;
-			default:
-				break;
-		}
-	}
-	return 0;
-}
-
-int reset() {
-	random_board(4);
-	return 0;
 }
 
 void draw_grid() {
@@ -161,6 +98,93 @@ void draw_blank(int i, int j) {
 	fill_rectangle(rect, BLACK);
 }
 
+int move_up() {
+	if (x < DIMENSION - 1) {
+		moves++;
+		board[x][y] = board[x + 1][y];
+		board[x + 1][y] = 8;
+		x++;
+		if (in_game) {
+			draw_blank(x, y);
+			draw_tile(x - 1, y);
+		}
+	}
+	return 0;
+}
+
+int move_down() {
+	if (x > 0) {
+		moves++;
+		board[x][y] = board[x - 1][y];
+		board[x - 1][y] = 8;
+		x--;
+		if (in_game) {
+			draw_blank(x, y);
+			draw_tile(x + 1, y);
+		}
+	}
+	return 0;
+}
+
+int move_left() {
+	if (y < DIMENSION - 1) {
+		moves++;
+		board[x][y] = board[x][y + 1];
+		board[x][y + 1] = 8;
+		y++;
+		if (in_game) {
+			draw_blank(x, y);
+			draw_tile(x, y - 1);
+		}
+	}
+	return 0;
+}
+
+int move_right() {
+	if (y > 0) {
+		moves++;
+		board[x][y] = board[x][y - 1];
+		board[x][y - 1] = 8;
+		y--;
+		if (in_game) {
+			draw_blank(x, y);
+			draw_tile(x, y + 1);
+		}
+	}
+	return 0;
+}
+
+int random_board(int times) {
+	int i;
+	srand(TCNT2);
+	for (i = 0; i < times; i++) {
+		int n = rand() % 4;
+		switch(n) {
+			case 0:
+				move_up();
+				break;
+			case 1:
+				move_down();
+				break;
+			case 2:
+				move_left();
+				break;
+			case 3:
+				move_right();
+				break;
+			default:
+				break;
+		}
+	}
+	moves = 0;
+	return 0;
+}
+
+int reset() {
+	random_board(4);
+	return 0;
+}
+
 int draw_board() {
 	int i;
 	/* draw image */
@@ -185,10 +209,17 @@ int draw_board() {
 	return 0;
 }
 
+void display_moves() {
+	char move_string[10];
+	sprintf(move_string,"Moves: %d",moves);
+	display_string_xy(move_string, 0, 242);
+}
+
 void moved() {
-	draw_board();
+	display_moves();
 	if (check()) {
 		in_game = 0;
+		draw_tile(2,2);
 	}
 }
 
@@ -231,6 +262,7 @@ int main() {
 	TCCR1A = 0;
 	TCCR1B = _BV(WGM12);
 	TCCR1B |= _BV(CS11);
+	TCCR1B |= _BV(CS10);
 	TIMSK1 |= _BV(OCIE1A);
 
 	/* timer for random seed */
@@ -250,6 +282,9 @@ int main() {
 
 		/* enter game */
 		reset();
+		while (check()) {
+			reset();
+		}
 
 		in_game = 1;
 		clear_screen();
@@ -260,12 +295,10 @@ int main() {
 		f_open(&file, "puzzle.bmp", FA_READ);
 		stat = init_bmp(&image_state, read_image_bytes, 4096);
 
+		display_moves();
 		draw_board();
-		if (check()) {
-			in_game = 0;
-		}
 
-		OCR1A = 65535;
+		OCR1A = 20000;
 
 		led_off();
 		sei();
