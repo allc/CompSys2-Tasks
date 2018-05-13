@@ -139,37 +139,46 @@ int tileToX(int tile) {
 	return tile % 3;
 }
 
-int redraw() {
+void draw_tile(int i, int j) {
+	rectangle rect;
+	int x = tileToX(board[i][j]);
+	int y = tileToY(board[i][j]);
+	rect.top = y * 80;
+	rect.left = x * 80;
+	rect.bottom = (y + 1) * 80;
+	rect.right = (x + 1) * 80;
+	if (stat == STATUS_OK) {
+		display_segment_bmp(j * 80, i * 80, &rect, &image_state);
+	}
+}
+
+void draw_blank(int i, int j) {
+	rectangle rect;
+	rect.top = i * 80;
+	rect.left = j * 80;
+	rect.bottom = (i + 1) * 80;
+	rect.right = (j + 1) * 80;
+	fill_rectangle(rect, BLACK);
+}
+
+int draw_board() {
 	int i;
 	/* draw image */
     for (i = 0; i < 3; i++) {
         int j;
         for (j = 0; j < 3; j++) {
+			/*
             char tile[1];
 			sprintf(tile,"%d",board[i][j]);
     		display_string_xy(tile, j * 80, i * 80);
 			_delay_ms(1);
+			*/
 
 			if (board[i][j] != 8) {
-				rectangle rect;
-				int x = tileToX(board[i][j]);
-				int y = tileToY(board[i][j]);
-				rect.top = y * 80;
-				rect.left = x * 80;
-				rect.bottom = (y + 1) * 80;
-				rect.right = (x + 1) * 80;
-				if (stat == STATUS_OK) {
-					display_segment_bmp(j * 80, i * 80, &rect, &image_state);
-				}
+				draw_tile(i, j);
 			} else {
-				rectangle rect;
-				rect.top = i * 80;
-				rect.left = j * 80;
-				rect.bottom = (i + 1) * 80;
-				rect.right = (j + 1) * 80;
-				fill_rectangle(rect, BLACK);
+				draw_blank(i, j);
 			}
-
         }
     }
 
@@ -177,7 +186,7 @@ int redraw() {
 }
 
 void moved() {
-	redraw();
+	draw_board();
 	if (check()) {
 		in_game = 0;
 	}
@@ -245,14 +254,16 @@ int main() {
 		in_game = 1;
 		clear_screen();
 
-		draw_grid();
+		/* draw_grid(); */
 
 		/* load image */
 		f_open(&file, "puzzle.bmp", FA_READ);
 		stat = init_bmp(&image_state, read_image_bytes, 4096);
 
-		redraw();
-		moved();
+		draw_board();
+		if (check()) {
+			in_game = 0;
+		}
 
 		OCR1A = 65535;
 
