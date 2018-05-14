@@ -10,13 +10,21 @@ An unfinished puzzle of image loaded from SD card will be shown, press direction
 
 ## Images
 
-Start screen: ![Start screen](docs/start.jpg)
+Start screen:
 
-In game: ![In game](docs/game.jpg)
+![Start screen](docs/start.jpg)
 
-Finished game: ![Finished game](docs/finish.jpg)
+In game:
 
-Option to restart: ![Option to restart](docs/restart.jpg)
+![In game](docs/game.jpg)
+
+Finished game:
+
+![Finished game](docs/finish.jpg)
+
+Option to restart:
+
+![Option to restart](docs/restart.jpg)
 
 ## Requirements
 
