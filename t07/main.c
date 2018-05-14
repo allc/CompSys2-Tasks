@@ -1,3 +1,6 @@
+/*
+8 Puzzle game
+*/
 #include "main.h"
 
 #define DIMENSION 3
