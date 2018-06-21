@@ -21,3 +21,9 @@ Preemptive Scheduler.
 ### Task 6
 
 Measure RAM usage.
+
+### Task 7
+
+Project: 8 Puzzle.
+
+See [README.md for Task 7](t07/README.md)
